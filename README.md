@@ -2,19 +2,19 @@
 
 ## Providers
 
-| Provider                | S3-compatible | IAM | IPv6 | restic | rclone | Path-Style | Class-A | Class-B |
-| ----------------------- | ------------- | --- | ---- | ------ | ------ | ---------- | ------- | ------- |
-| minio                   | Y             | Y   |      | Y      | Y      | Y          |         |         |
-| AWS S3                  | Y             | Y   |      | Y      | Y      | Y          |         |         |
-| GCP cloud storage       |               |     |      |        |        |            |         |         |
-| Azure                   |               |     |      |        |        |            |         |         |
-| Backblaze B2            |               | Y   |      | Y      | Y      | Y          |         |         |
-| Cloudflare R2           | Y             | Y   |      | Y      | Y      | Y          |         |         |
-| Scaleway Object Storage | Y             | Y   |      | Y      | Y      | Y          |         |         |
-| IDrive e2               | Y             | Y   |      | Y      | Y      |            |         |         |
-| Telnyx Cloud Storage    | Y             |     |      | Y      | Y      |            |         |         |
-| Tencent COS             | Y             | Y   |      | Y      | Y      | N          |         |         |
-| Aliyun OSS              | Y             | Y   |      | Y      | Y      | Y          |         |         |
+| Provider                | S3-compatible | IAM alike | IPv6 | restic | rclone | Path-Style | Class-A | Class-B |
+| ----------------------- | ------------- | --------- | ---- | ------ | ------ | ---------- | ------- | ------- |
+| minio                   | Y             | Y         |      | Y      | Y      | Y          |         |         |
+| AWS S3                  | Y             | Y         |      | Y      | Y      | Y          |         |         |
+| GCP cloud storage       |               |           |      |        |        |            |         |         |
+| Azure                   |               |           |      |        |        |            |         |         |
+| Backblaze B2            |               | Y         |      | Y      | Y      | Y          |         |         |
+| Cloudflare R2           | Y             | Y         |      | Y      | Y      | Y          |         |         |
+| Scaleway Object Storage | Y             | Y         |      | Y      | Y      | Y          |         |         |
+| IDrive e2               | Y             | Y         |      | Y      | Y      |            |         |         |
+| Telnyx Cloud Storage    | Y             | N         |      | Y      | Y      |            |         |         |
+| Tencent COS             | Y             | Y         |      | Y      | Y      | N          |         |         |
+| Aliyun OSS              | Y             | Y         |      | Y      | Y      | Y          |         |         |
 
 ### minio
 
@@ -118,6 +118,7 @@ AWS_DEFAULT_REGION=***
 
 ### Backblaze B2
 
+- https://www.backblaze.com/docs/cloud-storage-integrate-restic-with-backblaze-b2
 - restic: https://github.com/restic/restic/blob/267cd62ae43124c80b3bed0106695eff6f7585dd/doc/030_preparing_a_new_repo.rst#backblaze-b2
 
 1. [Create Bucket](https://secure.backblaze.com/b2_buckets.htm) , Private, no Encryption, no Object Lock
@@ -133,6 +134,7 @@ B2_ACCOUNT_KEY=***
 ### Cloudflare R2
 
 - https://developers.cloudflare.com/r2/
+- https://github.com/cloudflare/cloudflare-docs/commit/f4386f52f42359b48c531a1fc47cbc6cfbbcfa35
 
 1. [Create Bucket](https://dash.cloudflare.com/?to=/:account/r2/new)
 2. [Create Token](https://dash.cloudflare.com/?to=/:account/r2/api-tokens)
@@ -146,6 +148,8 @@ AWS_SECRET_ACCESS_KEY=***
 ### Scaleway Object Storage
 
 - https://www.scaleway.com/en/docs/storage/object/
+- https://www.scaleway.com/en/docs/tutorials/restic-s3-backup/
+- https://status.scaleway.com/uptime/6q1d32x121dx
 
 1. Create a Project, don't use the `default`, switch to the new Project
 2. [Create a Bucket](https://console.scaleway.com/object-storage/buckets/create) , Private, no Bucket versioning
@@ -154,7 +158,31 @@ AWS_SECRET_ACCESS_KEY=***
 
 ### IDrive e2
 
+- https://github.com/restic/restic/pull/4279/files
+- https://status.idrivecompute.com/
+
+1. [Create Bucket](https://app.idrivee2.com/buckets) , no Versioning, no Object Locking
+2. [Create Access Key](https://app.idrivee2.com/access-key)
+
+```sh
+RESTIC_REPOSITORY="s3:https://<the endpoint>/mybucket"
+AWS_ACCESS_KEY_ID=***
+AWS_SECRET_ACCESS_KEY=***
+```
+
 ### Telnyx Cloud Storage
+
+- https://support.telnyx.com/en/articles/8047928-use-dragondisk-with-telnyx-storage
+  > the secret key is not used by Telnyx Storage, you can type out anything you want here
+
+1. [Create Bucket](https://portal.telnyx.com/#/app/next/storage/buckets/create) , no Bucket Versioning
+2. [Create API Key](https://portal.telnyx.com/#/app/next/api-keys)
+
+```sh
+RESTIC_REPOSITORY="s3:https://us-central-1.telnyxstorage.com/mybucket"
+AWS_ACCESS_KEY_ID=***
+AWS_SECRET_ACCESS_KEY=anything
+```
 
 ### Tencent COS
 
@@ -217,6 +245,16 @@ AWS_SECRET_ACCESS_KEY=***
 AWS_DEFAULT_REGION="oss-cn-hongkong"
 S3_VIRTUAL_HOSTED_STYLE="yes"
 ```
+
+### Wasabi
+
+- https://status.wasabi.com/uptime/5w7g77w19r8z?page=1
+
+1. [create policy](https://console.wasabisys.com/policies)
+
+   > Same with AWS
+
+2. [create user](https://console.wasabisys.com/users) , `Programmatic`, create group and select policy
 
 ---
 
