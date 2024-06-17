@@ -1,20 +1,22 @@
 # s3-all
 
-| Provider                | S3-compatible | Free        | Paid | IAM | IPv6 | restic | rclone | Path-Style |
-| ----------------------- | ------------- | ----------- | ---- | --- | ---- | ------ | ------ | ---------- |
-| minio                   | Y             | ∞           |      | Y   |      | Y      | Y      | Y          |
-| AWS S3                  | Y             |             |      | Y   |      | Y      | Y      | Y          |
-| GCP cloud storage       |               |             |      |     |      |        |        |            |
-| Azure                   |               |             |      |     |      |        |        |            |
-| Backblaze B2            |               |             |      | Y   |      | Y      | Y      | Y          |
-| Cloudflare R2           | Y             |             |      | Y   |      | Y      | Y      | Y          |
-| Scaleway Object Storage | Y             | egress:75GB |      | Y   |      | Y      | Y      | Y          |
-| IDrive e2               | Y             | -           |      | Y   |      | Y      | Y      |            |
-| Telnyx Cloud Storage    | Y             |             |      |     |      | Y      | Y      |            |
-| Tencent COS             | Y             |             |      | Y   |      | Y      | Y      | N          |
-| Aliyun OSS              | Y             |             |      | Y   |      | Y      | Y      | Y          |
+## Providers
 
-## minio
+| Provider                | S3-compatible | IAM | IPv6 | restic | rclone | Path-Style | Class-A | Class-B |
+| ----------------------- | ------------- | --- | ---- | ------ | ------ | ---------- | ------- | ------- |
+| minio                   | Y             | Y   |      | Y      | Y      | Y          |         |         |
+| AWS S3                  | Y             | Y   |      | Y      | Y      | Y          |         |         |
+| GCP cloud storage       |               |     |      |        |        |            |         |         |
+| Azure                   |               |     |      |        |        |            |         |         |
+| Backblaze B2            |               | Y   |      | Y      | Y      | Y          |         |         |
+| Cloudflare R2           | Y             | Y   |      | Y      | Y      | Y          |         |         |
+| Scaleway Object Storage | Y             | Y   |      | Y      | Y      | Y          |         |         |
+| IDrive e2               | Y             | Y   |      | Y      | Y      |            |         |         |
+| Telnyx Cloud Storage    | Y             |     |      | Y      | Y      |            |         |         |
+| Tencent COS             | Y             | Y   |      | Y      | Y      | N          |         |         |
+| Aliyun OSS              | Y             | Y   |      | Y      | Y      | Y          |         |         |
+
+### minio
 
 - https://github.com/minio/minio
 
@@ -64,13 +66,14 @@ services:
       - MINIO_ROOT_PASSWORD=password
 ```
 
-## AWS S3
+### AWS S3
 
 - https://aws.amazon.com/s3/
-- https://web.archive.org/web/20240616113817/https://forum.restic.net/t/minimal-rights-in-s3-amazon/4009/2
 
 1. [Create bucket](https://s3.console.aws.amazon.com/s3/bucket/create?region=us-east-1) , no ACLs, no Public Access, no Bucket Versioning, no Object Lock
 2. [Create Policy](https://us-east-1.console.aws.amazon.com/iam/home#/policies$new?step=edit) - JSON
+
+> `s3:DeleteObject` is required for `restic forget --prune`
 
 ```json
 {
@@ -109,11 +112,11 @@ AWS_SECRET_ACCESS_KEY=***
 AWS_DEFAULT_REGION=***
 ```
 
-## GCP cloud storage
+### GCP cloud storage
 
-## Azure
+### Azure
 
-## Backblaze B2
+### Backblaze B2
 
 - restic: https://github.com/restic/restic/blob/267cd62ae43124c80b3bed0106695eff6f7585dd/doc/030_preparing_a_new_repo.rst#backblaze-b2
 
@@ -127,7 +130,7 @@ B2_ACCOUNT_ID=***
 B2_ACCOUNT_KEY=***
 ```
 
-## Cloudflare R2
+### Cloudflare R2
 
 - https://developers.cloudflare.com/r2/
 
@@ -140,7 +143,7 @@ AWS_ACCESS_KEY_ID=***
 AWS_SECRET_ACCESS_KEY=***
 ```
 
-## Scaleway Object Storage
+### Scaleway Object Storage
 
 - https://www.scaleway.com/en/docs/storage/object/
 
@@ -149,11 +152,11 @@ AWS_SECRET_ACCESS_KEY=***
 3. [Create a Policy](https://console.scaleway.com/iam/policies/create) , `Scope` - `Access to resources` - select the new Project, `Validate` - `ObjectStorageObjectsDelete ObjectStorageObjectsRead ObjectStorageObjectsWrite ObjectStorageReadOnly`
 4. [Create a Application](https://console.scaleway.com/iam/applications/create) , select the policy, `API keys` - `Generate an API key`
 
-## IDrive e2
+### IDrive e2
 
-## Telnyx Cloud Storage
+### Telnyx Cloud Storage
 
-## Tencent COS
+### Tencent COS
 
 1. [创建子用户](https://console.cloud.tencent.com/cam/user/create?systemType=FastCreateV2) , 访问方式 `编程访问`, 用户权限 `-（无）`
 2. [创建存储桶](https://console.cloud.tencent.com/cos/bucket) , no 版本控制, no 日志存储, no 服务端加密
@@ -167,12 +170,14 @@ AWS_DEFAULT_REGION="ap-singapore"
 S3_VIRTUAL_HOSTED_STYLE="yes"
 ```
 
-## Aliyun OSS
+### Aliyun OSS
 
 - restic: https://github.com/restic/restic/blob/267cd62ae43124c80b3bed0106695eff6f7585dd/doc/030_preparing_a_new_repo.rst#alibaba-cloud-aliyun-object-storage-system-oss
 
 1. [创建 Bucket](https://oss.console.aliyun.com/bucket) , no 公共访问, no 版本控制, no 服务端加密方式, no 定时备份
 2. [创建权限策略](https://ram.console.aliyun.com/policies/new) - `脚本编辑`
+
+> `oss:DeleteObject` is required for `restic forget --prune`
 
 ```json
 {
@@ -212,3 +217,10 @@ AWS_SECRET_ACCESS_KEY=***
 AWS_DEFAULT_REGION="oss-cn-hongkong"
 S3_VIRTUAL_HOSTED_STYLE="yes"
 ```
+
+---
+
+## ref
+
+- https://forum.restic.net/t/append-only-mode-with-s3-wasabi/845/4
+- https://web.archive.org/web/20240616113817/https://forum.restic.net/t/minimal-rights-in-s3-amazon/4009/2
